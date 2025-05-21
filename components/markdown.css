@@ -1,0 +1,7 @@
+.markdown-container {
+  @apply prose prose-headings:mt-4 prose-headings:mb-2 prose-p:my-2 
+         prose-ul:list-disc prose-ol:list-decimal prose-li:my-1
+         prose-table:border-collapse prose-td:border prose-td:px-4 prose-td:py-2
+         prose-th:bg-gray-100 prose-th:font-semibold prose-th:border
+         max-w-none prose-a:text-blue-600 hover:prose-a:text-blue-800;
+}
