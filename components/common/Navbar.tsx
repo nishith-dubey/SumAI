@@ -21,7 +21,7 @@ function Navbar() {
 
       <div className="flex-1 flex justify-center items-center">
         <SignedIn>
-          <Link href="/view-your-summaries" className={NavLink}>
+          <Link href="/dashboard" className={NavLink}>
             View Your Summaries
           </Link>
         </SignedIn>

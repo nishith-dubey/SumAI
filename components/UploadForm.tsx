@@ -1,12 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Input } from "./ui/input";
 import { z } from "zod";
 import { useUploadThing } from "@/utils/uploadthing";
 import { toast } from "sonner";
 import { generateKey } from "crypto";
-import { generateSummary } from "@/actions/upload-actions";
+import {
+  generateSummary,
+  storePdfSummaryAction,
+} from "@/actions/upload-actions";
+import { Loader, Snowflake } from "lucide-react";
+import { Router } from "next/router";
+import { useRouter } from "next/navigation";
+
 
 interface UploadFormInputProps {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -26,64 +33,105 @@ const schema = z.object({
 });
 
 function UploadForm() {
+  const formRef1 = useRef<HTMLFormElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [finalSummary, setFinalSummary] = useState("");
+  const router = useRouter();
 
-  const [finalSummary, setFinalSummary] = useState(" aa")
 
   const { startUpload } = useUploadThing("pdfUploader", {
-  onClientUploadComplete: (res) => {
-    console.log("Upload complete data:", res); // Add this logging
-    toast(`Uploaded successfully!`);
-  },
-  onUploadError: (error) => {
-    console.log("Upload error details:", error);
-    toast(`Error occurred: ${error.message}`);
-  },
-  onUploadBegin: (filename) => {
-    // toast("Upload started for:", filename);
-  },
-});
+    onClientUploadComplete: (res) => {
+      console.log("Upload complete data:", res); // Add this logging
+      toast(`Uploaded successfully!`);
+    },
+    onUploadError: (error) => {
+      console.log("Upload error details:", error);
+      toast(`Error occurred: ${error.message}`);
+    },
+    onUploadBegin: (filename) => {
+      // toast("Upload started for:", filename);
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("submitted");
-
-    const formData = new FormData(e.currentTarget);
-    const file = formData.get('file') as File;
-
-    // Validate file
-    const validatedFields = schema.safeParse({ file });
-    console.log(validatedFields)
-    if (!validatedFields.success) {
-      toast(
-        validatedFields.error.flatten().fieldErrors.file?.[0] ?? "Invalid file"
-      );
-      return;
-    }
-
-    toast('Uploading PDF, Please wait!')
 
     try {
-      console.log("File to upload:", {
-        name: file.name,
-        size: file.size,
-        type: file.type,
-      });
-      const res = await startUpload([file]);
-      console.log("Upload response:", res);
-      if(!res) return;
+      console.log("submitted");
+      setIsLoading(true);
+      const formData = new FormData(e.currentTarget);
+      const file = formData.get("file") as File;
 
-      //*******//
-      console.log('101')
-      const summary = await generateSummary(res);
-      setFinalSummary(summary.data?.summary);
-      console.log(summary.data?.summary)
-      // console.log(summary.data?.fileName, summary.data?.pdfText)
+      // Validate file
+      const validatedFields = schema.safeParse({ file });
+      console.log(validatedFields);
+      if (!validatedFields.success) {
+        toast(
+          validatedFields.error.flatten().fieldErrors.file?.[0] ??
+            "Invalid file"
+        );
+        setIsLoading(false);
+        return;
+      }
 
+      toast("Uploading PDF, Please wait!");
+
+      try {
+        console.log("File to upload:", {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+        });
+        const res = await startUpload([file]);
+        console.log("Upload response:", res);
+        if (!res) {
+          setIsLoading(false);
+          return;
+        }
+
+        //*******//
+        console.log("101");
+        const result = await generateSummary(res);
+        console.log(result.data);
+        setFinalSummary(result.data?.summary)
+        const summary = result.data?.summary;
+
+        if (summary) {
+          setIsLoading(false);
+          toast(
+            `Saving PDF.......!\n\nHang tight, we are saving your summary!`
+          );
+        }
+
+        let storeResult: any;
+        if (summary) {
+          storeResult = await storePdfSummaryAction({
+            fileUrl: res[0].serverData.file.url,
+            summary,
+            title: result.data?.formattedFileName,
+            fileName: file.name,
+          });
+
+          toast(
+            "Summary Generated! \n Your PDF has been successfully summarised and saved!"
+          );
+        }
+        
+
+        formRef1.current?.reset();
+        //redirect to summary [id] page
+        // router.push(`/summaries/${storeResult.data.id}`)
+
+      } catch (error) {
+        setIsLoading(false);
+        console.error("Upload error:", error);
+      }
     } catch (error) {
-      console.error("Upload error:", error);
+      setIsLoading(false);
+      console.error("Something went wrong:", error);
+    } finally {
+      setIsLoading(false);
     }
-
-    // const summary = await generateSummary(res);
   };
 
   return (
@@ -97,8 +145,9 @@ function UploadForm() {
       </div>
 
       <form
+        ref={formRef1}
         onSubmit={handleSubmit}
-        className="flex-col flex md:flex-row md:gap-0 gap-3 items-center justify-center  w-full rounded-2xl mt-6 lg:mt-8"
+        className="flex-col flex md:flex-row gap-1 roun items-center justify-center  w-full rounded-2xl mt-6 lg:mt-8"
       >
         <Input
           id="file"
@@ -106,15 +155,23 @@ function UploadForm() {
           type="file"
           accept="application/pdf"
           required
-          className="w-[70%] rounded-none h-full text-xs md:text-lg items-center text-center"
+          className="w-[70%] rounded-none h-full text-md md:text-lg items-center text-center"
         />
-        <button className=" text-white bg-gradient-to-r from-rose-500 to-rose-700 flex items-center justify-center font-semibold tracking-tight transform transition duration-300 ease-in-out hover:-translate-y-2 hover:bg-gradient-to-l w-auto py-2 p-0 px-4 text-xs md:text-lg h-full">
-          Upload your PDF
-        </button>
+        {!isLoading ? (
+          <button className=" text-white bg-gradient-to-r from-rose-500 to-rose-700 flex items-center justify-center font-semibold tracking-tight transform transition duration-300 ease-in-out hover:bg-gradient-to-l w-auto py-2 p-0 px-4 text-md md:text-lg h-full rounded-lg">
+            Upload your PDF
+          </button>
+        ) : (
+          <button
+            disabled={true}
+            className=" text-white bg-rose-400 flex items-center justify-center font-semibold tracking-tight w-auto py-2 p-0 px-4 text-md md:text-lg h-full cursor-not-allowed rounded-lg"
+          >
+            <Snowflake className="animate-spin mr-2" size={24} />
+            Please wait ...
+          </button>
+        )}
       </form>
-        {
-          <p className="mt-5">{finalSummary}</p>
-        }
+      {<p className="mt-5">{finalSummary}</p>}
     </div>
   );
 }

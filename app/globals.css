@@ -130,9 +130,6 @@
   a {
     @apply hover:cursor-pointer no-underline;
   }
-  button:not(.shadcn) {
-    @apply hover:cursor-pointer bg-violet-600 hover:bg-violet-700;
-  }
 }
 
 

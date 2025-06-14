@@ -2,7 +2,7 @@
 import { neon } from '@neondatabase/serverless';
 import { error } from 'console';
 
-async function getData() {
+export async function getDBConnection() {
   if(!process.env.NEONDB_URI){
     throw new Error("Neon Database URL is not defined")
   }
