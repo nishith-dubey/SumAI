@@ -24,6 +24,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  icons: {
+    icon: '/favicon.svg',
+  },
   title: "SumAI - AI Powered PDF Summarizer",
   description: "SumAI is an app for summarizing PDF documents.",
 };

@@ -24,6 +24,6 @@ export default clerkMiddleware(async (auth, req) => {
 export const config = {
   matcher: [
     // Match all routes except static files
-    '/((?!_next/static|_next/image|favicon.ico).*)'
+    '/((?!_next/static|_next/image|favicon.svg).*)'
   ]
 };

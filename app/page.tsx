@@ -8,7 +8,8 @@ export default function Page() {
   return (
     <div className="relative w-full">
 
-        <BGGradient/>
+        <BGGradient className="from-emerald-500 via-teal-500 to-cyan-500
+            opacity-15"/>
       <div className="flex flex-col items-center justify-center">
         <HeroSection/>
         <DemoSection/>

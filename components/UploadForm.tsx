@@ -120,7 +120,7 @@ function UploadForm() {
 
         formRef1.current?.reset();
         //redirect to summary [id] page
-        // router.push(`/summaries/${storeResult.data.id}`)
+        router.push(`/summaries/${storeResult.data.id}`)
 
       } catch (error) {
         setIsLoading(false);
@@ -147,7 +147,7 @@ function UploadForm() {
       <form
         ref={formRef1}
         onSubmit={handleSubmit}
-        className="flex-col flex md:flex-row gap-1 roun items-center justify-center  w-full rounded-2xl mt-6 lg:mt-8"
+        className="flex-col flex md:flex-row gap-4 roun items-center justify-center  w-full rounded-2xl mt-6 lg:mt-8"
       >
         <Input
           id="file"
@@ -155,6 +155,7 @@ function UploadForm() {
           type="file"
           accept="application/pdf"
           required
+          disabled = {isLoading}
           className="w-[70%] rounded-none h-full text-md md:text-lg items-center text-center"
         />
         {!isLoading ? (

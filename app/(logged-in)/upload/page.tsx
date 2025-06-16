@@ -7,7 +7,8 @@ import React from 'react'
 function page() {
   return (
     <div>
-      <BGGradient/>
+      <BGGradient className='from-emerald-500 via-teal-500 to-cyan-500
+            opacity-15'/>
       <section className="flex justify-center">
       <div className="items-center flex flex-col gap-6 mt-20 max-w-[90vw] ">
         <div className="relative inline-block p-[1px] rounded-full bg-gradient-to-r from-rose-100 via-rose-500 to-rose-800 animate-gradient-x border-rose-100">
