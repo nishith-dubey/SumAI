@@ -50,7 +50,7 @@ export default async function Dashboard() {
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {summaries.length === 0 ? (
+          {summaries?.length === 0 ? (
             <div className="md:w-[84vw] flex justify-center items-center flex-col mt-5 gap-2">
               <div className="text-xl text-black">No summaries yet!!</div>
               <div className="text-[16px] text-slate-700">
