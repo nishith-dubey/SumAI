@@ -16,8 +16,8 @@ export default async function SummaryPage(props: {
     notFound();
   }
 
-  const { title, summary_text, file_name } = summary;
-
+  const { title, summary_text, file_name, created_at, word_count, original_file_url } = summary;
+  
   return (
     <div className="flex flex-col items-center py-4 min-h-screen w-full">
       <div className="relative w-full">
@@ -27,6 +27,10 @@ export default async function SummaryPage(props: {
         title={title}
         summary_text={summary_text}
         file_name={file_name}
+        created_at={created_at}
+        word_count={word_count}
+        original_file_url = {original_file_url}
+        summary = {summary}
       />
       <SummaryBody summary={summary} />
     </div>

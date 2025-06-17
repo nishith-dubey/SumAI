@@ -24,7 +24,6 @@ export async function generateSummaryFromOpenAI(pdfText: string) {
       max_tokens: 1500, // ✅ Correct key
     });
 
-    console.log(completion.choices[0].message.content);
     return completion.choices[0].message.content;
   } catch (error: any) {
     console.error('OpenAI error:', error);

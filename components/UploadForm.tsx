@@ -41,7 +41,6 @@ function UploadForm() {
 
   const { startUpload } = useUploadThing("pdfUploader", {
     onClientUploadComplete: (res) => {
-      console.log("Upload complete data:", res); // Add this logging
       toast(`Uploaded successfully!`);
     },
     onUploadError: (error) => {
@@ -57,14 +56,12 @@ function UploadForm() {
     e.preventDefault();
 
     try {
-      console.log("submitted");
       setIsLoading(true);
       const formData = new FormData(e.currentTarget);
       const file = formData.get("file") as File;
 
       // Validate file
       const validatedFields = schema.safeParse({ file });
-      console.log(validatedFields);
       if (!validatedFields.success) {
         toast(
           validatedFields.error.flatten().fieldErrors.file?.[0] ??
@@ -77,22 +74,16 @@ function UploadForm() {
       toast("Uploading PDF, Please wait!");
 
       try {
-        console.log("File to upload:", {
-          name: file.name,
-          size: file.size,
-          type: file.type,
-        });
         const res = await startUpload([file]);
-        console.log("Upload response:", res);
+
         if (!res) {
           setIsLoading(false);
           return;
         }
 
-        //*******//
-        console.log("101");
+        
         const result = await generateSummary(res);
-        console.log(result.data);
+        
         setFinalSummary(result.data?.summary)
         const summary = result.data?.summary;
 

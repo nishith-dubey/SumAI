@@ -1,4 +1,5 @@
 import { FileText } from "lucide-react";
+import SummaryViewer from "./SummaryViewer";
 
 export default function SummaryBody({summary}: {
   summary : Object
@@ -12,12 +13,12 @@ export default function SummaryBody({summary}: {
         {/* Floating word count badge */}
         <div className="absolute top-2 sm:top-4 right-2 sm:right-4 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground bg-white/90 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full shadow-xs">
           <FileText className="h-3 w-3 sm:h-4 sm:w-4 text-rose-400" />
-          {summary.word_count?.toLocaleString()} words
+          {summary?.word_count?.toLocaleString()} words
         </div>
 
         {/* Summary viewer */}
         <div className="relative mt-8 sm:mt-6 flex justify-center">
-          {/* <SummaryViewer summary={summary.summary_text} /> */}
+          <SummaryViewer summary={summary} />
         </div>
       </div>
     </div>

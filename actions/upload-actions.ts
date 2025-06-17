@@ -41,13 +41,10 @@ export async function generateSummary(uploadResponse: {
   }
 
   try {
-    console.log("📄 Fetching and extracting text from:", pdfUrl);
-    const pdfText = await fetchAndExtractPdfText(pdfUrl);
-    console.log("✅ Extracted PDF text length:", pdfText.length);
+    const pdfText = await fetchAndExtractPdfText(pdfUrl);;
 
     // const summary = await generateSummaryFromOpenAI(pdfText);
     const summary = await generateSummaryFromGemini(pdfText);
-    console.log("🧠 Generated summary");
 
     if (!summary) {
       return {
@@ -58,8 +55,6 @@ export async function generateSummary(uploadResponse: {
     }
 
     const formattedFileName = formatFileNameAsTitle(fileName || "Untitled PDF");
-    console.log(fileName);
-    console.log(formattedFileName);
     return {
       success: true,
       message: "PDF processed successfully",
@@ -95,13 +90,6 @@ export async function savePdfSummary({
         "One or more required fields are missing before inserting into the database"
       );
     }
-    console.log("Saving summary with values:", {
-      userId,
-      fileUrl,
-      summary,
-      title,
-      fileName,
-    });
 
     const sql = await getDBConnection();
     const [savedSummary] = await sql

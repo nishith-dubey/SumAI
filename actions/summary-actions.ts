@@ -10,7 +10,6 @@ export async function deleteSummaryAction({summaryId} : {
   try {
     const user = await currentUser();
     const userId = user?.id
-    console.log(summaryId, userId)
 
     if(!userId){
       throw new Error("User not found!")
@@ -26,7 +25,6 @@ export async function deleteSummaryAction({summaryId} : {
     RETURNING id;
     `;
 
-    console.log(result)
     if(result.length > 0){
       revalidatePath('/dashboard');
       return {success: true};

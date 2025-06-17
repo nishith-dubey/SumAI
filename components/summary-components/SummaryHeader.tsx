@@ -1,25 +1,34 @@
+"use client";
 import {
-  ArrowLeft,
-  ArrowRight,
   Calendar1Icon,
   ChevronLeft,
   Clock4,
   Download,
+  ExternalLink,
   FilePenLine,
   SparklesIcon,
-  ViewIcon,
 } from "lucide-react";
-import Link from "next/link";
+import DownloadSummaryButton from "@/components/summary-components/DownloadSummaryButton"
 
 export default function SummaryHeader({
   title,
   summary_text,
   file_name,
+  created_at,
+  word_count,
+  original_file_url,
+  summary,
 }: {
   title: string;
   summary_text: string;
   file_name: string;
+  created_at: object;
+  word_count: number;
+  original_file_url: string;
+  summary: object
 }) {
+  const readingTime = Math.ceil((word_count || 0) / 200);
+  
   return (
     <section className="flex flex-col gap-4 w-[90vw]">
       <div className="flex flex-row justify-between w-full items-start sm:items-center gap-4 sm:gap-0">
@@ -36,15 +45,19 @@ export default function SummaryHeader({
           <div className="relative inline-block p-[1px] rounded-full bg-gradient-to-r from-amber-100 via-amber-500 to-amber-800 animate-gradient-x border-amber-100 scale-90">
             <div className="rounded-full bg-white dark:bg-black px-2 md:px-4 py-1 md:py-2 flex gap-2 items-center text-amber-600 text-sm sm:text-base">
               <Calendar1Icon className="animate-pulse w-4 h-4 sm:w-5 sm:h-5" />
-              Date
+              {new Date(created_at).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
             </div>
           </div>
 
           {/* Badge 3 */}
           <div className="relative inline-block p-[1px] rounded-full bg-gradient-to-r from-orange-100 via-orange-500 to-orange-800 animate-gradient-x border-orange-100 scale-90">
             <div className="rounded-full bg-white dark:bg-black px-2 md:px-4 py-1 md:py-2 flex gap-2 items-center text-orange-600 text-sm sm:text-base">
-              <Clock4 className="animate-pulse w-4 h-4 sm:w-5 sm:h-5" />1 min
-              read
+              <Clock4 className="animate-pulse w-4 h-4 sm:w-5 sm:h-5" />
+              {readingTime} min read
             </div>
           </div>
         </div>
@@ -73,20 +86,16 @@ export default function SummaryHeader({
         )}
 
         <div className="flex justify-center items-center gap-4 ">
-          <Link
-            href={"/"}
+          <a
+            href={original_file_url}
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex justify-center items-center px-2 py-[5px] rounded-lg bg-gray-100"
           >
-            <ViewIcon className="mx-2 text-rose-600" size={20} />
-            <span className="text-zinc-800">View Original</span>
-          </Link>
-          <Link
-            href={"/"}
-            className="flex justify-center items-center px-2 py-[5px] rounded-lg bg-rose-200"
-          >
-            <Download className="mx-2 text-rose-600" size={20} />
-            <span className="text-zinc-800">Download Summary</span>
-          </Link>
+            <ExternalLink className="mx-2 text-rose-600" size={20} />
+            <span className="text-rose-800 font-semibold">View Original</span>
+          </a>
+          <DownloadSummaryButton summary={summary} />
         </div>
       </div>
     </section>
